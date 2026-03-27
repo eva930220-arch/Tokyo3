@@ -1,0 +1,1827 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="東京行程">
+<link rel="apple-touch-icon" href="https://emojicdn.elk.sh/✈️">
+<title>東京行程 4/25–4/30</title>
+<style>
+  :root {
+    --primary: #c0392b;
+    --primary-light: #e74c3c;
+    --accent: #f39c12;
+    --bg: #fafaf8;
+    --card: #ffffff;
+    --text: #2c3e50;
+    --muted: #7f8c8d;
+    --border: #ecf0f1;
+    --green: #27ae60;
+    --blue: #2980b9;
+    --purple: #8e44ad;
+    --shadow: 0 2px 12px rgba(0,0,0,0.08);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Noto Sans TC', 'Hiragino Kaku Gothic ProN', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    font-size: 15px;
+    line-height: 1.6;
+    max-width: 700px;
+    margin: 0 auto;
+    padding-bottom: 40px;
+  }
+  /* PWA install banner */
+  .pwa-banner {
+    background: #1a1a2e;
+    color: #eee;
+    padding: 10px 16px;
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .pwa-banner a { color: #f0a500; text-decoration: none; }
+
+  /* Header */
+  .hero {
+    background: linear-gradient(135deg, #c0392b 0%, #e74c3c 50%, #f39c12 100%);
+    color: white;
+    padding: 28px 20px 20px;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '🗼';
+    position: absolute;
+    right: -10px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 100px;
+    opacity: 0.15;
+  }
+  .hero h1 { font-size: 28px; font-weight: 800; letter-spacing: -0.5px; }
+  .hero p { font-size: 13px; opacity: 0.85; margin-top: 4px; }
+
+  /* Nav tabs */
+  .tab-nav {
+    background: #fff;
+    border-bottom: 2px solid var(--border);
+    display: flex;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  }
+  .tab-nav::-webkit-scrollbar { display: none; }
+  .tab-btn {
+    flex: 0 0 auto;
+    padding: 12px 14px;
+    background: none;
+    border: none;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--muted);
+    cursor: pointer;
+    white-space: nowrap;
+    border-bottom: 3px solid transparent;
+    margin-bottom: -2px;
+    transition: all 0.2s;
+    font-family: inherit;
+  }
+  .tab-btn.active { color: var(--primary); border-bottom-color: var(--primary); }
+  .tab-btn:hover { color: var(--primary-light); }
+
+  /* Sections */
+  .section { display: none; padding: 16px; }
+  .section.active { display: block; }
+
+  /* Cards */
+  .card {
+    background: var(--card);
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 12px;
+    box-shadow: var(--shadow);
+    border-left: 4px solid var(--primary);
+  }
+  .card.blue { border-left-color: var(--blue); }
+  .card.green { border-left-color: var(--green); }
+  .card.purple { border-left-color: var(--purple); }
+  .card.amber { border-left-color: var(--accent); }
+  .card.gray { border-left-color: #bdc3c7; }
+
+  .card h3 {
+    font-size: 15px;
+    font-weight: 700;
+    margin-bottom: 8px;
+    color: var(--text);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .card p, .card li { font-size: 14px; color: #4a5568; line-height: 1.65; }
+  .card ul { padding-left: 18px; }
+  .card ul li { margin-bottom: 3px; }
+
+  /* Timeline */
+  .timeline { position: relative; }
+  .tl-item {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 16px;
+    position: relative;
+  }
+  .tl-item::before {
+    content: '';
+    position: absolute;
+    left: 34px;
+    top: 32px;
+    bottom: -16px;
+    width: 2px;
+    background: var(--border);
+  }
+  .tl-item:last-child::before { display: none; }
+  .tl-time {
+    flex: 0 0 60px;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--primary);
+    padding-top: 4px;
+    text-align: right;
+  }
+  .tl-dot {
+    flex: 0 0 24px;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: var(--primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    color: white;
+    font-weight: 700;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+  .tl-dot.blue { background: var(--blue); }
+  .tl-dot.green { background: var(--green); }
+  .tl-dot.amber { background: var(--accent); }
+  .tl-dot.gray { background: #95a5a6; }
+  .tl-content { flex: 1; }
+  .tl-content h4 {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 4px;
+  }
+  .tl-content p, .tl-content li { font-size: 13px; color: #555; line-height: 1.6; }
+  .tl-content ul { padding-left: 16px; margin-top: 4px; }
+
+  /* Transport pill */
+  .transport {
+    background: #eaf4ff;
+    border-radius: 8px;
+    padding: 8px 12px;
+    margin: 8px 0;
+    font-size: 12px;
+    color: var(--blue);
+    font-weight: 600;
+    display: flex;
+    align-items: flex-start;
+    gap: 6px;
+    line-height: 1.5;
+  }
+  .transport .icon { flex-shrink: 0; margin-top: 1px; }
+  .transport a { color: var(--blue); text-decoration: underline; font-size: 11px; }
+  .transport.walk { background: #f0fff4; color: var(--green); }
+  .transport.info { background: #fffbeb; color: #92400e; }
+
+  /* Airline card */
+  .airline-card {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    color: white;
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 12px;
+    position: relative;
+    overflow: hidden;
+  }
+  .airline-card::after {
+    content: '✈';
+    position: absolute;
+    right: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 48px;
+    opacity: 0.08;
+  }
+  .airline-card h3 { color: #ffd700; font-size: 15px; margin-bottom: 10px; }
+  .airline-card .flight-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 6px;
+    font-size: 13px;
+  }
+  .airline-card .badge {
+    background: rgba(255,215,0,0.2);
+    border: 1px solid rgba(255,215,0,0.4);
+    color: #ffd700;
+    padding: 2px 8px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 700;
+  }
+  .airline-card .rule-list { font-size: 12px; color: #ccc; line-height: 1.8; }
+  .airline-card .rule-list li { list-style: none; padding-left: 16px; position: relative; }
+  .airline-card .rule-list li::before { content: '▸'; position: absolute; left: 0; color: #ffd700; }
+
+  /* Ticket comparison table */
+  .ticket-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .ticket-table th { background: var(--primary); color: white; padding: 8px; text-align: left; }
+  .ticket-table td { padding: 8px; border-bottom: 1px solid var(--border); }
+  .ticket-table tr:hover td { background: #fef9f9; }
+  .ticket-table .rec { color: var(--primary); font-weight: 700; }
+  .best { background: #fff3cd !important; }
+  .best td { font-weight: 600; }
+
+  /* Section header */
+  .sec-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 16px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid var(--border);
+  }
+  .sec-header .date-badge {
+    background: var(--primary);
+    color: white;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 700;
+  }
+  .sec-header h2 { font-size: 18px; font-weight: 800; }
+
+  /* Checklist */
+  .checklist li {
+    list-style: none;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 14px;
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  .checklist li:last-child { border-bottom: none; }
+  .checklist .tag {
+    flex-shrink: 0;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 2px 7px;
+    border-radius: 10px;
+    background: #fee2e2;
+    color: #c0392b;
+  }
+  .checklist .tag.green { background: #d1fae5; color: #065f46; }
+  .checklist .tag.blue { background: #dbeafe; color: #1e40af; }
+  .checklist .tag.amber { background: #fef3c7; color: #92400e; }
+
+  /* Airport detail */
+  .airport-step {
+    display: flex;
+    gap: 10px;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 13px;
+  }
+  .airport-step:last-child { border-bottom: none; }
+  .step-num {
+    flex: 0 0 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: var(--blue);
+    color: white;
+    font-size: 11px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .step-num.red { background: var(--primary); }
+  .step-content { flex: 1; line-height: 1.6; }
+  .step-content strong { display: block; font-size: 13px; margin-bottom: 2px; }
+
+  /* Map button */
+  .map-btn {
+    display: inline-block;
+    background: var(--blue);
+    color: white;
+    padding: 5px 12px;
+    border-radius: 6px;
+    font-size: 12px;
+    text-decoration: none;
+    font-weight: 600;
+    margin-top: 6px;
+    transition: opacity 0.2s;
+  }
+  .map-btn:hover { opacity: 0.85; }
+  .map-btn.green { background: var(--green); }
+  .map-btn.red { background: var(--primary); }
+
+  /* Price note */
+  .price-note {
+    background: #fff9db;
+    border: 1px solid #f59e0b;
+    border-radius: 8px;
+    padding: 10px 12px;
+    font-size: 12px;
+    color: #78350f;
+    margin: 8px 0;
+  }
+
+  /* Warning box */
+  .warn {
+    background: #fff3cd;
+    border-left: 4px solid var(--accent);
+    border-radius: 0 8px 8px 0;
+    padding: 10px 12px;
+    font-size: 13px;
+    color: #856404;
+    margin: 8px 0;
+  }
+
+  /* Info box */
+  .info-box {
+    background: #e8f4fd;
+    border-left: 4px solid var(--blue);
+    border-radius: 0 8px 8px 0;
+    padding: 10px 12px;
+    font-size: 13px;
+    color: #1e3a5f;
+    margin: 8px 0;
+  }
+
+  /* Ticket summary */
+  .ticket-summary {
+    background: linear-gradient(135deg, #1a1a2e, #2c3e50);
+    color: white;
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 12px;
+  }
+  .ticket-summary h3 { color: #ffd700; margin-bottom: 10px; font-size: 15px; }
+  .ticket-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 6px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+    font-size: 13px;
+  }
+  .ticket-row:last-child { border-bottom: none; }
+  .ticket-row .day { color: #aaa; font-size: 12px; }
+  .ticket-row .cost { color: #4ade80; font-weight: 700; }
+  .ticket-total {
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 2px solid rgba(255,215,0,0.4);
+    display: flex;
+    justify-content: space-between;
+    font-weight: 800;
+    font-size: 16px;
+    color: #ffd700;
+  }
+
+  /* Variant tabs for 鐮倉 */
+  .variant-tabs { display: flex; gap: 8px; margin-bottom: 12px; }
+  .variant-btn {
+    flex: 1;
+    padding: 8px;
+    border: 2px solid var(--border);
+    background: white;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all 0.2s;
+    text-align: center;
+  }
+  .variant-btn.active { border-color: var(--primary); color: var(--primary); background: #fff5f5; }
+
+  .variant-content { display: none; }
+  .variant-content.active { display: block; }
+
+  hr { border: none; border-top: 1px solid var(--border); margin: 12px 0; }
+
+  .emoji-row { font-size: 20px; display: flex; gap: 6px; margin-bottom: 6px; }
+</style>
+</head>
+<body>
+
+<div class="pwa-banner">
+  📲 <span><strong>加到 iPhone 主頁畫面</strong>：點下方「分享」→「加入主畫面」→「新增」</span>
+</div>
+
+<div class="hero">
+  <h1>東京行程 4/25–4/30</h1>
+  <p>TOKYO 6 DAYS · 5 NIGHTS ✈ A方案</p>
+</div>
+
+<nav class="tab-nav" id="tabNav">
+  <button class="tab-btn active" onclick="showTab('tab425')">4/25 抵達</button>
+  <button class="tab-btn" onclick="showTab('tab426')">4/26 鐮倉</button>
+  <button class="tab-btn" onclick="showTab('tab427')">4/27 淺草</button>
+  <button class="tab-btn" onclick="showTab('tab428')">4/28 澀谷</button>
+  <button class="tab-btn" onclick="showTab('tab429')">4/29 銀座</button>
+  <button class="tab-btn" onclick="showTab('tab430')">4/30 返程</button>
+  <button class="tab-btn" onclick="showTab('tabTicket')">🎫 票券</button>
+  <button class="tab-btn" onclick="showTab('tabPrepare')">📋 事前準備</button>
+</nav>
+
+<!-- ===================== 4/25 ===================== -->
+<div id="tab425" class="section active">
+  <div class="sec-header">
+    <span class="date-badge">4/25（六）</span>
+    <h2>抵達日</h2>
+  </div>
+
+  <!-- 航班資訊 -->
+  <div class="airline-card">
+    <h3>✈ 去程：捷星 Jetstar GK（桃園→成田）</h3>
+    <div class="flight-row">
+      <span class="badge">出發</span>
+      <span>桃園 TPE 13:10 → 成田 NRT 17:35</span>
+    </div>
+    <div class="flight-row">
+      <span class="badge">成田</span>
+      <span>第三航廈（LCC 專用）</span>
+    </div>
+    <hr style="border-color:rgba(255,255,255,0.15);margin:10px 0">
+    <div class="rule-list">
+      <strong style="color:#ffd700;font-size:13px;">📦 行李規定</strong>
+      <ul>
+        <li>手提：7 公斤（1主行李 + 1小件，合計≤7kg），尺寸 56×36×23 cm</li>
+        <li>托運：<strong style="color:#ffd700;">20 公斤</strong>（你已加購）</li>
+        <li>單件托運最重 32 公斤；超重現場加購費用極高，建議行前秤重</li>
+        <li>液體 100ml/瓶，裝入 1L 透明夾鏈袋；行動電源僅限隨身</li>
+        <li>⚠️ 捷星嚴格秤重，登機門可能再查手提，超重即需補費</li>
+      </ul>
+      <br>
+      <strong style="color:#ffd700;font-size:13px;">🍱 餐點（含餐班次）</strong>
+      <ul>
+        <li>此班次<strong style="color:#4ade80;"> 含機上餐點</strong>，無需另行點餐</li>
+        <li>可攜帶自己的食物上機（不可攜帶液體超過 100ml）</li>
+      </ul>
+      <br>
+      <strong style="color:#ffd700;font-size:13px;">⏰ 報到時間</strong>
+      <ul>
+        <li>建議 <strong style="color:white;">11:10 前</strong> 抵達桃園機場辦理登機（起飛前 2 小時）</li>
+        <li>線上 check-in 可提前 7 天至起飛前 1 小時辦理</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- 抵達流程 -->
+  <div class="card">
+    <h3>🛬 抵達流程（4/25 成田第三航廈）</h3>
+    <div class="airport-step">
+      <div class="step-num">1</div>
+      <div class="step-content">
+        <strong>降落成田第三航廈（約 17:35）</strong>
+        依「入境 / 到着」指標前往入境審查
+      </div>
+    </div>
+    <div class="airport-step">
+      <div class="step-num">2</div>
+      <div class="step-content">
+        <strong>入境審查 + 提取行李</strong>
+        第三航廈行李轉盤在同層；填妥入境卡（或用 VJW 電子申報）
+      </div>
+    </div>
+    <div class="airport-step">
+      <div class="step-num">3</div>
+      <div class="step-content">
+        <strong>出關後 → 前往電車乘車處</strong>
+        <strong style="color:var(--primary);">第三航廈沒有直通電車站！</strong>需步行至第二航廈換乘。<br>
+        出關後依<span style="color:var(--blue);font-weight:700;">「アクセス通路（Access Way）」藍色標示</span>，<br>
+        從第三航廈 1F 北口 3 出口右轉，沿地板藍色跑道線步行，過天橋約 <strong>10–15 分鐘</strong>抵達<strong>第二航廈地下 1 樓</strong>的「空港第２ビル駅」。
+      </div>
+    </div>
+    <div class="airport-step">
+      <div class="step-num step-num red">4</div>
+      <div class="step-content">
+        <strong>第二航廈 B1F 乘車</strong>
+        京成電鐵（Skyliner）和 JR（NEX）售票處都在此層
+      </div>
+    </div>
+    <div class="transport">
+      <span class="icon">⏱</span>
+      <span>第三航廈→第二航廈電車站：步行約 10–15 分鐘（出關後約 18:20 可到達電車月台）</span>
+    </div>
+    <div class="warn">⚠️ 荷物較多時建議搭第二、三航廈間的免費接駁巴士（3–5 分鐘），在第三航廈 1F 外即可搭乘，但需等車。時間充裕建議步行，時間不夠才搭巴士。</div>
+  </div>
+
+  <!-- 機場→住宿 交通比較 -->
+  <div class="card blue">
+    <h3>🚆 成田機場 → 東新宿（住宿）</h3>
+    <p style="font-size:12px;color:var(--muted);margin-bottom:10px;">住宿：Ying Higashi Shinjuku（東新宿）· 最近地鐵站：東新宿（都營大江戶線／副都心線）</p>
+
+    <p style="font-weight:700;color:var(--primary);margin-bottom:6px;">方案①｜Skyliner → 上野終點站 ＋ 副都心線（推薦）</p>
+    <table class="ticket-table" style="margin-bottom:8px;">
+      <tr><th>路段</th><th>時間</th><th>費用</th></tr>
+      <tr><td>成田→京成上野（Skyliner 終點）</td><td>約 44 分</td><td>¥2,580</td></tr>
+      <tr><td>京成上野→上野（步行 3 分 or 出站）</td><td>3 分</td><td>¥0（同站換乘）</td></tr>
+      <tr><td>上野（銀座線 G-16）→ 表参道（G-02）→ 副都心線 F-02 → 東新宿（F-10）</td><td>約 28 分</td><td>¥270</td></tr>
+      <tr class="best"><td>合計</td><td><strong>約 75 分</strong></td><td><strong>¥2,850</strong></td></tr>
+    </table>
+    <div class="info-box" style="margin-bottom:10px;">
+      💡 <strong>Skyliner 可以在日暮里或上野下車</strong>：上野是 Skyliner 的終點站（京成上野），票價相同（¥2,580），比日暮里多 3 分鐘，但從上野搭銀座線→副都心線直達東新宿更順，<strong>不需要轉 JR 山手線</strong>，更方便！
+    </div>
+
+    <p style="font-weight:700;color:var(--primary);margin-bottom:6px;">方案②｜N'EX 直達新宿 ＋ 轉東新宿</p>
+    <table class="ticket-table" style="margin-bottom:12px;">
+      <tr><th>路段</th><th>時間</th><th>費用</th></tr>
+      <tr><td>成田→新宿（N'EX）</td><td>約 80 分</td><td>¥3,330（外國人來回票 ¥5,200）</td></tr>
+      <tr><td>新宿→東新宿（副都心線 or 步行）</td><td>5–10 分</td><td>¥180 or 步行 15 分</td></tr>
+      <tr><td>合計（N'EX 單程）</td><td><strong>約 90 分</strong></td><td><strong>¥3,510</strong></td></tr>
+    </table>
+
+    <div class="info-box">
+      <strong>📌 結論：</strong>Skyliner 上野終點站方案最省事，¥2,850 / 約 75 分，全程只換一次車（銀座線）。<br>
+      若來回都搭 NEX，可購買<strong>外國人限定來回優惠票 ¥5,200</strong>，在成田機場 JR 窗口憑護照購買。
+    </div>
+
+    <p style="font-weight:700;font-size:13px;margin-top:10px;margin-bottom:6px;">📅 4/25 當天推薦班次（Skyliner → 上野）</p>
+    <table class="ticket-table">
+      <tr><th>成田出發</th><th>路線</th><th>抵達京成上野</th><th>抵達東新宿（估）</th></tr>
+      <tr class="best"><td><strong>18:36</strong></td><td>Skyliner</td><td>19:20</td><td>約 19:50</td></tr>
+      <tr><td>18:56</td><td>Skyliner</td><td>19:40</td><td>約 20:10</td></tr>
+      <tr><td>19:16</td><td>Skyliner</td><td>20:00</td><td>約 20:30</td></tr>
+    </table>
+    <p style="font-size:12px;color:var(--muted);margin-top:6px;">* 建議搭 18:36 班，出關+步行到電車站預估 18:20 可到。Skyliner 為對號座，需提前在售票機或官網購票。</p>
+  </div>
+
+  <!-- 當晚 -->
+  <div class="card green">
+    <h3>🏨 抵達住宿後流程</h3>
+    <div class="timeline">
+      <div class="tl-item">
+        <div class="tl-time">約 19:50</div>
+        <div class="tl-dot">🏠</div>
+        <div class="tl-content">
+          <h4>辦理入住 — Ying Higashi Shinjuku</h4>
+          <p>放行李、換裝休息。</p>
+          <a href="https://www.google.com/maps/search/?api=1&query=東新宿+Ying+Higashi+Shinjuku" class="map-btn" target="_blank">📍 地圖</a>
+        </div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-time">約 20:30</div>
+        <div class="tl-dot green">🍜</div>
+        <div class="tl-content">
+          <h4>就近晚餐</h4>
+          <p>東新宿附近推薦：拉麵（二郎系）、居酒屋、便利商店。<br>
+          若體力尚可可走到新宿東口（步行 10 分），選擇更豐富。</p>
+        </div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-time">22:00+</div>
+        <div class="tl-dot gray">😴</div>
+        <div class="tl-content">
+          <h4>早點休息！</h4>
+          <p>明天 4/26 一早出發鐮倉，需 08:00 前離開住宿。</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== 4/26 鐮倉 ===================== -->
+<div id="tab426" class="section">
+  <div class="sec-header">
+    <span class="date-badge">4/26（日）</span>
+    <h2>鐮倉一日遊</h2>
+  </div>
+
+  <!-- 版本切換 -->
+  <div class="variant-tabs">
+    <button class="variant-btn active" onclick="showVariant('kamakura-full')">完整版（含逗子海灘）</button>
+    <button class="variant-btn" onclick="showVariant('kamakura-short')">精簡版（小町通直接走到底）</button>
+  </div>
+
+  <!-- 完整版 -->
+  <div id="kamakura-full" class="variant-content active">
+    <div class="card blue">
+      <h3>📌 路線邏輯（完整版）</h3>
+      <p>東新宿→新宿 → 藤沢 → 江之島 → 鐮倉高校前 → 小町通 → 逗子海灘 → 熱海花火 → 返宿</p>
+      <div class="info-box" style="margin-top:8px;">
+        🚃 <strong>江之電一日票（¥800）怎麼選？</strong><br>
+        • <strong>藤沢出發（一日票划算）：</strong>藤沢→江之島→高校前→鐮倉 共 3 段 ¥810，買一日票 ¥800 省 ¥10 且可自由上下車<br>
+        • <strong>搭湘南モノレール去（不需買一日票）：</strong>大船モノレール→湘南江の島→江之電江之島→高校前→鐮倉 只用 2 段 ¥560，單買即可，省 ¥240
+      </div>
+    </div>
+
+    <div class="timeline">
+      <div class="tl-item">
+        <div class="tl-time">07:30</div>
+        <div class="tl-dot green">🚇</div>
+        <div class="tl-content">
+          <h4>東新宿 → 新宿 出發</h4>
+          <div class="transport">
+            <span class="icon">🚇</span>
+            <span>東新宿（都營大江戶線 E-29）→ 新宿（E-01）<br>約 8 分 · ¥280<br>在新宿換乘 JR 湘南新宿ライン（月台多，注意指標）</span>
+          </div>
+
+          <div class="card blue" style="margin-top:10px;padding:12px;">
+            <h3 style="font-size:13px;margin-bottom:8px;">🚆 去程路線選擇（新宿 → 江之島）</h3>
+            <p style="font-weight:700;font-size:12px;margin-bottom:4px;">① 藤沢換江之電（原版，最常用）</p>
+            <p style="font-size:12px;color:#555;margin-bottom:8px;">新宿→藤沢（JR 湘南新宿ライン逗子行，約 55 分，¥990）<br>→ 藤沢換乘江之電 → 江之島站（約 11 分，¥250）<br>✅ 直達最多班次，適合早出發</p>
+            <p style="font-weight:700;font-size:12px;margin-bottom:4px;">② 大船換湘南懸垂式單軌（ジェットコースター路線）</p>
+            <p style="font-size:12px;color:#555;margin-bottom:4px;">新宿→大船（JR 湘南新宿ライン，約 48 分，¥990）<br>→ 大船換乘<strong>湘南モノレール</strong>（懸垂式）→ 湘南江の島駅（約 14 分，¥330）<br>湘南江の島駅步行 5 分到江ノ電江之島站<br>✅ <strong>體驗感十足！</strong>懸垂式單軌倒掛在軌道下方，最高時速 75km/h，急升降＋急轉彎，被稱為「空中雲霄飛車」🎢<br>Suica 可直接使用。先頭車廂視野最好！</p>
+            <p style="font-size:11px;color:var(--muted);">※ 湘南江の島駅到江ノ電江之島站步行約 5 分</p>
+          </div>
+
+          <a href="https://www.google.com/maps/search/?api=1&query=東新宿駅+都営大江戸線" class="map-btn" target="_blank">📍 東新宿駅</a>
+        </div>
+      </div>
+
+      <div class="tl-item">
+        <div class="tl-time">08:00</div>
+        <div class="tl-dot green">🚂</div>
+        <div class="tl-content">
+          <h4>新宿 → 藤沢（JR 湘南新宿ライン）</h4>
+          <div class="transport">
+            <span class="icon">🚂</span>
+            <span>新宿→藤沢 直達<br>約 55 分 · ¥990<br>（逗子行 or 小田原行 皆可，在藤沢下車）</span>
+          </div>
+          <p>藤沢站下車後，換乘江之電（購 ¥800 一日票）→ 江之島站</p>
+          <a href="https://www.google.com/maps/search/?api=1&query=藤沢駅+JR湘南新宿ライン" class="map-btn" target="_blank">📍 藤沢駅</a>
+        </div>
+      </div>
+
+      <div class="tl-item">
+        <div class="tl-time">09:30</div>
+        <div class="tl-dot">🏝</div>
+        <div class="tl-content">
+          <h4>江之島</h4>
+          <p>江島神社（免費）→ 弁天洞窟岩屋（¥500）→ 海蠟燭展望燈塔（¥500）。停留約 2 小時。</p>
+          <div class="card amber" style="margin-top:8px;padding:10px;">
+            <p>🦑 章魚仙貝 ¥500｜🐚 烤扇貝 ¥500起｜🍱 江之島丼 ¥2,000起<br>🍢 海鮮串燒 ¥300–500/串｜🏠 魚見亭/貝作 定食 ¥2,500–3,500</p>
+          </div>
+          <a href="https://www.google.com/maps/search/?api=1&query=江の島+藤沢市" class="map-btn" target="_blank">📍 江之島</a>
+        </div>
+      </div>
+
+      <div class="tl-item">
+        <div class="tl-time">11:30</div>
+        <div class="tl-dot gray">🚃</div>
+        <div class="tl-content">
+          <h4>江之島 → 鐮倉高校前</h4>
+          <div class="transport">
+            <span class="icon">🚃</span>
+            <span>江之電 江之島站→鐮倉高校前 · 7 分 · 含於一日票</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="tl-item">
+        <div class="tl-time">12:00</div>
+        <div class="tl-dot">🎬</div>
+        <div class="tl-content">
+          <h4>鐮倉高校前 — 灌籃高手平交道</h4>
+          <p>《灌籃高手》OP 取景地，電車通過時平交道鈴聲響起。站旁有小餐廳吃午餐 ¥1,000 起，停留約 45 分。</p>
+          <a href="https://www.google.com/maps/search/?api=1&query=鎌倉高校前+踏切+スラムダンク" class="map-btn" target="_blank">📍 灌籃高手平交道</a>
+        </div>
+      </div>
+
+      <div class="tl-item">
+        <div class="tl-time">13:00</div>
+        <div class="tl-dot gray">🚃</div>
+        <div class="tl-content">
+          <h4>鐮倉高校前 → 鐮倉</h4>
+          <div class="transport">
+            <span class="icon">🚃</span>
+            <span>江之電 鐮倉高校前→鐮倉 · 15 分 · 含於一日票</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="tl-item">
+        <div class="tl-time">13:30</div>
+        <div class="tl-dot amber">🛍</div>
+        <div class="tl-content">
+          <h4>小町通</h4>
+          <p>鐮倉站出站即到，步行街 250m。抹茶甜點（和楽紅屋）、鴿子燒、鐮倉土產，逛約 1 小時。</p>
+          <a href="https://www.google.com/maps/search/?api=1&query=小町通り+神奈川県鎌倉市" class="map-btn" target="_blank">📍 小町通</a>
+        </div>
+      </div>
+
+      <div class="tl-item">
+        <div class="tl-time">15:00</div>
+        <div class="tl-dot gray">🚉</div>
+        <div class="tl-content">
+          <h4>鐮倉 → 逗子</h4>
+          <div class="transport">
+            <span class="icon">🚉</span>
+            <span>JR 橫須賀線 鎌倉→逗子 · 2 分 · ¥170<br>⚠️ 出江之電閘口後，另進 JR 閘口計費<br>逗子站下車後步行約 8 分到海岸</span>
+          </div>
+          <a href="https://www.google.com/maps/search/?api=1&query=逗子駅+JR横須賀線" class="map-btn" target="_blank">📍 逗子駅</a>
+        </div>
+      </div>
+
+      <div class="tl-item">
+        <div class="tl-time">15:30</div>
+        <div class="tl-dot blue">🏖</div>
+        <div class="tl-content">
+          <h4>逗子海灘（逗子海岸）</h4>
+          <p>神奈川著名海灘，比江之島更寧靜，4 月底沙灘不擁擠。散步吹海風，黃昏面向富士山方向，夕陽光線極美，停留約 1.5 小時。</p>
+          <a href="https://www.google.com/maps/search/?api=1&query=逗子海岸+神奈川県逗子市" class="map-btn" target="_blank">📍 逗子海灘</a>
+        </div>
+      </div>
+
+      <div class="tl-item">
+        <div class="tl-time">17:30</div>
+        <div class="tl-dot gray">🚉</div>
+        <div class="tl-content">
+          <h4>逗子 → 熱海（出發看花火）</h4>
+          <div class="transport">
+            <span class="icon">🚉</span>
+            <span>逗子→大船（JR 橫須賀線）約 15 分 · 大船→熱海（JR 東海道線）約 60 分<br>合計約 75 分 · ¥1,760</span>
+          </div>
+          <a href="https://www.google.com/maps/search/?api=1&query=熱海駅+JR東海道線+静岡県熱海市" class="map-btn" target="_blank">📍 熱海駅</a>
+        </div>
+      </div>
+
+      <div class="tl-item">
+        <div class="tl-time">19:30</div>
+        <div class="tl-dot">🎆</div>
+        <div class="tl-content">
+          <h4>熱海海灘花火大會</h4>
+          <p>熱海サンビーチ，花火施放於海上，可從海岸線欣賞，完全免費觀看。建議 19:00 前抵達佔位。</p>
+          <div class="transport info">
+            <span class="icon">⏱</span>
+            <span>花火約 20–30 分鐘，結束後人潮湧出，建議等 15 分後再離開車站</span>
+          </div>
+          <a href="https://www.google.com/maps/search/?api=1&query=熱海サンビーチ+花火大会+静岡県熱海市" class="map-btn" target="_blank">📍 熱海サンビーチ</a>
+        </div>
+      </div>
+
+      <div class="tl-item">
+        <div class="tl-time">21:00</div>
+        <div class="tl-dot gray">🚉</div>
+        <div class="tl-content">
+          <h4>熱海 → 新宿 → 東新宿（回住宿）</h4>
+          <div class="transport">
+            <span class="icon">🚉</span>
+            <span>熱海→新宿（JR 東海道線→品川→山手線 or 湘南新宿ライン）約 100 分 · ¥1,980<br>新宿→東新宿（都營大江戶線）約 8 分 · ¥280<br>預計約 23:20 返宿</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 精簡版 -->
+  <div id="kamakura-short" class="variant-content">
+    <div class="card blue">
+      <h3>📌 路線邏輯（精簡版 — 反向）</h3>
+      <p>東新宿→新宿 →（JR）→ <strong>鐮倉（小町通）</strong> → 鐮倉高校前 → 江之島 → 熱海花火 → 返宿</p>
+      <p style="margin-top:6px;font-size:12px;color:var(--muted);">由東往西走：先逛小町通吃午餐，再搭江之電到高校前拍照，最後到江之島，不走回頭路，直接往熱海</p>
+    </div>
+
+    <!-- JR Pass 試算 -->
+    <div class="card amber">
+      <h3>💴 JR Pass / JR Tokyo Wide Pass 划算嗎？</h3>
+      <p style="font-size:12px;color:var(--muted);margin-bottom:8px;">JR Tokyo Wide Pass（外國人限定）= ¥15,000 / 3天；全國 JR Pass 7日 = ¥50,000</p>
+      <p style="font-weight:700;font-size:13px;margin-bottom:6px;">本行程 4/26 使用到的 JR 費用合計：</p>
+      <table class="ticket-table" style="margin-bottom:10px;">
+        <tr><th>路段</th><th>費用（Suica）</th></tr>
+        <tr><td>新宿→鐮倉（JR 湘南新宿ライン）</td><td>¥1,010</td></tr>
+        <tr><td>鐮倉→大船（JR 橫須賀線）</td><td>¥230</td></tr>
+        <tr><td>大船→熱海（JR 東海道線）</td><td>¥1,520</td></tr>
+        <tr><td>熱海→新宿（JR 東海道線）</td><td>¥1,980</td></tr>
+        <tr style="font-weight:700;"><td>4/26 JR 小計</td><td>¥4,740</td></tr>
+      </table>
+      <p style="font-weight:700;font-size:13px;margin-bottom:6px;">若加上 4/30 N'EX（如果不用 Skyliner）：</p>
+      <table class="ticket-table" style="margin-bottom:10px;">
+        <tr><td>東新宿→新宿→成田（N'EX）</td><td>¥3,510</td></tr>
+        <tr style="font-weight:700;"><td>全程 JR 合計</td><td>¥8,250</td></tr>
+      </table>
+      <div class="warn">
+        ❌ <strong>JR Tokyo Wide Pass ¥15,000 不划算</strong><br>
+        本行程 JR 總費用約 ¥8,250，買 Wide Pass 反而多花 ¥6,750。<br>
+        Wide Pass 適合：一趟旅行同時去鐮倉＋熱海＋伊豆＋河口湖等多個近郊，才回本。<br><br>
+        ❌ <strong>全國 JR Pass ¥50,000 完全不划算</strong><br>
+        適合東京→大阪→廣島→九州這種橫跨多地的長途旅行，東京近郊行程絕對賠本。<br><br>
+        ✅ <strong>結論：全程用 Suica 按次付款，最省錢最彈性。</strong>
+      </div>
+    </div>
+
+    <!-- 江之電一日票試算 -->
+    <div class="card green">
+      <h3>🚃 江之電一日票（¥800）精簡版划算嗎？</h3>
+      <p style="font-weight:700;font-size:13px;margin-bottom:6px;">精簡版搭乘的江之電路段：</p>
+      <table class="ticket-table" style="margin-bottom:8px;">
+        <tr><th>路段</th><th>單程費用</th></tr>
+        <tr><td>鐮倉→鐮倉高校前</td><td>¥250</td></tr>
+        <tr><td>鐮倉高校前→江之島</td><td>¥230</td></tr>
+        <tr style="font-weight:700;background:#f0fff4;"><td>單買合計</td><td>¥480</td></tr>
+        <tr><td>江之電一日票</td><td>¥800</td></tr>
+      </table>
+      <div class="info-box">
+        💡 精簡版只搭 2 段，單買 ¥480 比一日票 ¥800 <strong>省 ¥320</strong>。<br>
+        <strong>→ 精簡版不建議買一日票，單次購票即可。</strong><br><br>
+        📌 參考：完整版（藤沢→江之島→高校前→鐮倉）搭 3 段合計 ¥810，<br>
+        一日票 ¥800 省 ¥10，幾乎持平，但有彈性可以隨意上下車。<br>
+        <strong>→ 完整版買一日票比較合適（彈性高）。</strong>
+      </div>
+    </div>
+
+    <div class="timeline">
+      <div class="tl-item">
+        <div class="tl-time">07:30</div>
+        <div class="tl-dot green">🚇</div>
+        <div class="tl-content">
+          <h4>東新宿 → 新宿 → 鐮倉</h4>
+          <div class="card blue" style="margin-top:6px;padding:12px;">
+            <h3 style="font-size:13px;margin-bottom:8px;">🚆 去程路線選擇（新宿 → 鐮倉）</h3>
+            <p style="font-weight:700;font-size:12px;margin-bottom:4px;">① JR 湘南新宿ライン 直達（推薦）</p>
+            <p style="font-size:12px;color:#555;margin-bottom:10px;">東新宿→新宿（都營大江戶線 8 分 ¥280）<br>→ 新宿→鐮倉（JR 湘南新宿ライン＋橫須賀線直通 逗子行，約 60 分 ¥1,010）<br>✅ 直達無換乘，最方便</p>
+            <p style="font-weight:700;font-size:12px;margin-bottom:4px;">② 大船で湘南モノレールに乗り換えて江之島へ🎢（去程先往江之島方向也可）</p>
+            <p style="font-size:12px;color:#555;">如果想先體驗懸垂式單軌：<br>
+            東新宿→新宿（都營 8 分 ¥280）<br>
+            → 新宿→大船（JR 湘南新宿ライン 48 分 ¥990）<br>
+            → 大船換<strong style="color:var(--primary);">湘南モノレール</strong>（懸垂式倒掛，14 分 ¥330）→湘南江の島駅<br>
+            → 步行 5 分到江ノ電江之島站 → 搭江之電到鐮倉（約 34 分 ¥480 or 單買）<br>
+            ⚠️ 這樣路線就變成：江之島先→高校前→小町通（逆回頭），需注意行程順序。<br>
+            🎢 懸垂式倒掛，最高時速 75km/h，急升降急轉彎，Suica 可用，先頭車廂最刺激！</p>
+          </div>
+          <a href="https://www.google.com/maps/search/?api=1&query=東新宿駅+都営大江戸線" class="map-btn" target="_blank">📍 東新宿駅</a>
+        </div>
+      </div>
+
+      <div class="tl-item">
+        <div class="tl-time">09:00</div>
+        <div class="tl-dot amber">🛍</div>
+        <div class="tl-content">
+          <h4>小町通（逛街＋早午餐）</h4>
+          <p>鐮倉站出站即到，步行街 250m。烤仙貝、鴿子燒、抹茶甜點、鐮倉土產，逛約 1 小時。<br>午餐推薦站旁的鮮魚定食或鐮倉パスタ ¥1,000–2,000。</p>
+          <a href="https://www.google.com/maps/search/?api=1&query=小町通り+神奈川県鎌倉市" class="map-btn" target="_blank">📍 小町通</a>
+        </div>
+      </div>
+
+      <div class="tl-item">
+        <div class="tl-time">10:30</div>
+        <div class="tl-dot gray">🚃</div>
+        <div class="tl-content">
+          <h4>鐮倉 → 鐮倉高校前（江之電）</h4>
+          <div class="transport">
+            <span class="icon">🚃</span>
+            <span>⚠️ 出小町通往南走到「鐮倉站」JR 閘口旁即是江之電閘口<br>
+            鐮倉（江之電）→ 鐮倉高校前 · 約 15 分 · <strong>單買 ¥250</strong>（此版本不買一日票）</span>
+          </div>
+          <a href="https://www.google.com/maps/search/?api=1&query=鎌倉駅+江ノ島電鉄" class="map-btn" target="_blank">📍 鐮倉駅（江之電）</a>
+        </div>
+      </div>
+
+      <div class="tl-item">
+        <div class="tl-time">10:50</div>
+        <div class="tl-dot">🎬</div>
+        <div class="tl-content">
+          <h4>鐮倉高校前 — 灌籃高手平交道</h4>
+          <p>《灌籃高手》OP 取景地，電車通過時平交道鈴聲響起，面向江之島絕景構圖。停留約 30–45 分。</p>
+          <a href="https://www.google.com/maps/search/?api=1&query=鎌倉高校前+踏切+スラムダンク" class="map-btn" target="_blank">📍 灌籃高手平交道</a>
+        </div>
+      </div>
+
+      <div class="tl-item">
+        <div class="tl-time">11:40</div>
+        <div class="tl-dot gray">🚃</div>
+        <div class="tl-content">
+          <h4>鐮倉高校前 → 江之島（江之電）</h4>
+          <div class="transport">
+            <span class="icon">🚃</span>
+            <span>鐮倉高校前→江之島 · 約 7 分 · <strong>單買 ¥230</strong></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="tl-item">
+        <div class="tl-time">12:00</div>
+        <div class="tl-dot">🏝</div>
+        <div class="tl-content">
+          <h4>江之島（下午場）</h4>
+          <p>江島神社（免費）→ 弁天洞窟岩屋（¥500）→ 海蠟燭展望燈塔（¥500）。停留約 2 小時。</p>
+          <div class="card amber" style="margin-top:8px;padding:10px;">
+            <p>🦑 章魚仙貝 ¥500｜🐚 烤扇貝 ¥500起｜🍱 江之島丼 ¥2,000起<br>🍢 海鮮串燒 ¥300–500/串｜🏠 魚見亭/貝作 定食 ¥2,500–3,500</p>
+          </div>
+          <a href="https://www.google.com/maps/search/?api=1&query=江の島+藤沢市" class="map-btn" target="_blank">📍 江之島</a>
+        </div>
+      </div>
+
+      <div class="tl-item">
+        <div class="tl-time">14:30</div>
+        <div class="tl-dot gray">🚉</div>
+        <div class="tl-content">
+          <h4>江之島 → 大船 → 熱海（前往花火）</h4>
+          <div class="transport">
+            <span class="icon">🚃</span>
+            <span><strong>步驟 1：</strong>江之電 江之島→藤沢 約 11 分 · ¥250<br>（OR 若去時搭了湘南モノレール：走回湘南江の島駅→大船，反方向 14 分 ¥330）</span>
+          </div>
+          <div class="transport">
+            <span class="icon">🚉</span>
+            <span><strong>步驟 2：</strong>藤沢→大船（JR 東海道線）約 5 分 · ¥200<br>（湘南モノレール回程的話直接到大船，跳過此步）</span>
+          </div>
+          <div class="transport">
+            <span class="icon">🚉</span>
+            <span><strong>步驟 3：</strong>大船→熱海（JR 東海道線 熱海/沼津/島田方向）約 55 分 · ¥1,520<br>⚠️ 留意電光板，搭往熱海/沼津方向，不要搭到東京方向</span>
+          </div>
+          <div class="transport info">
+            <span class="icon">💡</span>
+            <span>合計約 75 分 · 總費用 ¥1,970（藤沢経由）or ¥1,850（モノレール経由）<br>約 16:45–17:00 抵達熱海，可先在仲見世通り逛逛或吃晚餐等花火</span>
+          </div>
+          <a href="https://www.google.com/maps/search/?api=1&query=熱海駅+静岡県熱海市" class="map-btn" target="_blank">📍 熱海駅</a>
+        </div>
+      </div>
+
+      <div class="tl-item">
+        <div class="tl-time">19:30</div>
+        <div class="tl-dot">🎆</div>
+        <div class="tl-content">
+          <h4>熱海海灘花火大會</h4>
+          <p>熱海サンビーチ，花火施放於海上，完全免費觀看。建議 19:00 前抵達佔位。花火約 20–30 分鐘，結束後建議等 15 分人潮散去再往車站。</p>
+          <a href="https://www.google.com/maps/search/?api=1&query=熱海サンビーチ+花火大会+静岡県熱海市" class="map-btn" target="_blank">📍 熱海サンビーチ</a>
+        </div>
+      </div>
+
+      <div class="tl-item">
+        <div class="tl-time">21:00</div>
+        <div class="tl-dot gray">🚉</div>
+        <div class="tl-content">
+          <h4>熱海 → 新宿 → 東新宿（回住宿）</h4>
+          <div class="transport">
+            <span class="icon">🚉</span>
+            <span>熱海→新宿（JR 東海道線→品川→山手線 or 湘南新宿ライン）約 100 分 · ¥1,980<br>新宿→東新宿（都營大江戶線）約 8 分 · ¥280<br>預計約 23:20 返宿</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 精簡版費用總覽 -->
+    <div class="card">
+      <h3>💰 精簡版 4/26 全天費用試算</h3>
+      <table class="ticket-table">
+        <tr><th>項目</th><th>費用</th></tr>
+        <tr><td>東新宿→新宿（都營）</td><td>¥280</td></tr>
+        <tr><td>新宿→鐮倉（JR）</td><td>¥1,010</td></tr>
+        <tr><td>鐮倉→高校前（江之電單買）</td><td>¥250</td></tr>
+        <tr><td>高校前→江之島（江之電單買）</td><td>¥230</td></tr>
+        <tr><td>江之島→藤沢（江之電）＋藤沢→大船（JR）</td><td>¥450</td></tr>
+        <tr><td>大船→熱海（JR）</td><td>¥1,520</td></tr>
+        <tr><td>熱海→新宿（JR）</td><td>¥1,980</td></tr>
+        <tr><td>新宿→東新宿（都營）</td><td>¥280</td></tr>
+        <tr class="best"><td><strong>交通合計</strong></td><td><strong>¥6,000</strong></td></tr>
+      </table>
+      <p style="font-size:12px;color:var(--muted);margin-top:6px;">* 若搭湘南モノレール：大船往返費用 ¥660，影響不大；江之電部分單買 ¥480 vs 一日票 ¥800，省 ¥320</p>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== 4/27 淺草 ===================== -->
+<div id="tab427" class="section">
+  <div class="sec-header">
+    <span class="date-badge">4/27（一）</span>
+    <h2>淺草 × 上野 × 新宿夜晚</h2>
+  </div>
+
+  <div class="timeline">
+
+    <!-- 出發 -->
+    <div class="tl-item">
+      <div class="tl-time">08:30</div>
+      <div class="tl-dot green">🚇</div>
+      <div class="tl-content">
+        <h4>東新宿 → 淺草</h4>
+        <div class="transport">
+          <span class="icon">🚇</span>
+          <span>東新宿（副都心線 F-10）→ 表参道（F-02）→ 銀座線（G-02）→ 淺草（G-19）<br>約 30 分 · ¥220</span>
+        </div>
+        <a href="https://www.google.com/maps/search/?api=1&query=浅草駅+東京メトロ銀座線+台東区" class="map-btn" target="_blank">📍 淺草駅</a>
+      </div>
+    </div>
+
+    <!-- 雷門 -->
+    <div class="tl-item">
+      <div class="tl-time">09:00</div>
+      <div class="tl-dot">⛩</div>
+      <div class="tl-content">
+        <h4>雷門 × 仲見世通 × 淺草寺</h4>
+        <p>早上人少拍照最佳。雷門→仲見世通→淺草寺→淺草神社，約 1.5 小時。</p>
+        <a href="https://www.google.com/maps/search/?api=1&query=雷門+浅草寺+台東区浅草" class="map-btn" target="_blank">📍 雷門・淺草寺</a>
+      </div>
+    </div>
+
+    <!-- 展望台 -->
+    <div class="tl-item">
+      <div class="tl-time">10:30</div>
+      <div class="tl-dot walk">🚶</div>
+      <div class="tl-content">
+        <h4>淺草寺 → 淺草文化觀光中心（步行）</h4>
+        <div class="transport walk">
+          <span class="icon">🚶</span>
+          <span>雷門正對面，步行不到 1 分鐘</span>
+        </div>
+        <p>8F 免費展望台俯瞰雷門＋晴空塔，約 15 分。</p>
+        <a href="https://www.google.com/maps/search/?api=1&query=浅草文化観光センター+展望台" class="map-btn" target="_blank">📍 觀光中心</a>
+      </div>
+    </div>
+
+    <!-- 今半午餐 -->
+    <div class="tl-item">
+      <div class="tl-time">11:30</div>
+      <div class="tl-dot">🥩</div>
+      <div class="tl-content">
+        <h4>午餐：淺草今半（国際通り本店）壽喜燒</h4>
+        <p>頂級壽喜燒，11:30 開門，和服服務生示範。</p>
+        <div class="price-note">
+          💰 <strong>正確價格（含稅）：</strong><br>
+          • 御膳（すき焼＋前菜＋飯）¥6,600～¥7,700<br>
+          • 霜降り御膳 ¥8,800　• 極上霜降り御膳 ¥11,000<br>
+          ⚠️ ランチ不接受預約，直接入場排隊；另加服務費 10%
+        </div>
+        <a href="https://www.google.com/maps/search/?api=1&query=浅草今半+すき焼き+台東区西浅草" class="map-btn" target="_blank">📍 淺草今半</a>
+      </div>
+    </div>
+
+    <!-- 吾妻橋 — 就在今半旁邊，步行即可 -->
+    <div class="tl-item">
+      <div class="tl-time">13:30</div>
+      <div class="tl-dot walk">🚶</div>
+      <div class="tl-content">
+        <h4>吾妻橋 × 隅田川 — 晴空塔拍攝</h4>
+        <div class="transport walk">
+          <span class="icon">🚶</span>
+          <span>淺草今半→吾妻橋 步行約 5 分（往隅田川方向走）</span>
+        </div>
+        <p>隅田川沿岸，晴空塔倒影入鏡，白天也很美。停留約 20 分。</p>
+        <a href="https://www.google.com/maps/search/?api=1&query=吾妻橋+スカイツリー+撮影スポット+浅草" class="map-btn" target="_blank">📍 吾妻橋</a>
+      </div>
+    </div>
+
+    <!-- 淺草→上野：步行20分 或 地鐵3分 -->
+    <div class="tl-item">
+      <div class="tl-time">14:00</div>
+      <div class="tl-dot gray">🚇</div>
+      <div class="tl-content">
+        <h4>淺草 → 上野</h4>
+        <div class="transport">
+          <span class="icon">🚇</span>
+          <span>淺草（銀座線 G-19）→ 上野（G-16）約 3 分 · ¥180<br>
+          OR 步行約 20 分（沿国際通り往北，可順路逛下町商店街）</span>
+        </div>
+        <a href="https://www.google.com/maps/search/?api=1&query=上野駅+東京メトロ銀座線" class="map-btn" target="_blank">📍 上野駅</a>
+      </div>
+    </div>
+
+    <!-- アメ横 -->
+    <div class="tl-item">
+      <div class="tl-time">14:15</div>
+      <div class="tl-dot amber">🏪</div>
+      <div class="tl-content">
+        <h4>アメ横（阿美橫丁）逛街掃貨</h4>
+        <p>上野駅旁，400 間店鋪密集排列的戰後市場。生鮮海鮮、藥妝、零食、服飾、鞋子應有盡有。食べ歩き推薦：カットフルーツ ¥300、烤小籠包 ¥500、海鮮串 ¥500 起。逛約 1 小時。</p>
+        <a href="https://www.google.com/maps/search/?api=1&query=アメ横+上野+台東区" class="map-btn" target="_blank">📍 アメ横</a>
+      </div>
+    </div>
+
+    <!-- 上野公園 -->
+    <div class="tl-item">
+      <div class="tl-time">15:30</div>
+      <div class="tl-dot walk">🚶</div>
+      <div class="tl-content">
+        <h4>アメ横 → 上野公園 × 不忍池（步行）</h4>
+        <div class="transport walk">
+          <span class="icon">🚶</span>
+          <span>アメ横出口往西步行約 5 分即到上野公園入口</span>
+        </div>
+        <p>廣闊都市公園，不忍池旁散步，停留約 1 小時。東照宮 ¥500 值得進；4 月底有晚開的八重櫻！</p>
+        <a href="https://www.google.com/maps/search/?api=1&query=上野公園+台東区上野公園" class="map-btn" target="_blank">📍 上野公園</a>
+      </div>
+    </div>
+
+    <!-- 晚餐：一頭牛 上野店 -->
+    <div class="tl-item">
+      <div class="tl-time">17:30</div>
+      <div class="tl-dot walk">🚶</div>
+      <div class="tl-content">
+        <h4>上野公園 → 一頭牛燒肉 房家（上野六丁目店）</h4>
+        <div class="transport walk">
+          <span class="icon">🚶</span>
+          <span>上野公園→上野駅→步行約 8 分到上野六丁目店</span>
+        </div>
+        <p>A5 等級黑毛和牛一頭買い，下町價格，飲み放題コース可選。</p>
+        <div class="price-note">
+          💰 <strong>正確價格（上野六丁目店）：</strong><br>
+          • 燒肉宴会コース（飲み放題付）<strong>¥6,500 起</strong>/人<br>
+          • 單點 A5 和牛盛り合わせ 約 ¥3,000–5,000<br>
+          ⚠️ 提前 1–2 天在ホットペッパーグルメ預約<br>
+          ⚠️ 此店在<strong>上野六丁目</strong>，非新宿，步行上野駅約 8 分
+        </div>
+        <a href="https://www.google.com/maps/search/?api=1&query=一頭牛焼肉+房家+上野六丁目" class="map-btn" target="_blank">📍 一頭牛 房家 上野店</a>
+      </div>
+    </div>
+
+    <!-- 吃完晚餐搭JR去新宿 -->
+    <div class="tl-item">
+      <div class="tl-time">19:30</div>
+      <div class="tl-dot gray">🚉</div>
+      <div class="tl-content">
+        <h4>上野 → 新宿（吃完晚餐出發）</h4>
+        <div class="transport">
+          <span class="icon">🚉</span>
+          <span>上野（JR 山手線 外回り 池袋方向）→ 新宿<br>約 25 分 · ¥210<br>⚠️ 搭外回り（逆時針）經池袋到新宿，不要搭内回り</span>
+        </div>
+        <a href="https://www.google.com/maps/search/?api=1&query=上野駅+JR山手線" class="map-btn" target="_blank">📍 上野駅 JR</a>
+      </div>
+    </div>
+
+    <!-- 3D貓哥吉拉 -->
+    <div class="tl-item">
+      <div class="tl-time">20:00</div>
+      <div class="tl-dot amber">🐱</div>
+      <div class="tl-content">
+        <h4>新宿東口 3D 貓看板 × 哥吉拉 × 歌舞伎町</h4>
+        <p>クロス新宿ビジョン 3D 貓（每整點播放，約 1 分鐘）→ 步行 3 分到 Hotel Gracery 8F 哥吉拉頭（免費仰拍）→ 歌舞伎町一番街夜景拍照。</p>
+        <div class="transport info">
+          <span class="icon">💡</span>
+          <span>3D 貓整點播放，建議 19:58 前站定位置等待；新宿駅東口出來即可看到</span>
+        </div>
+        <a href="https://www.google.com/maps/search/?api=1&query=クロス新宿ビジョン+3D猫+新宿東口" class="map-btn" target="_blank">📍 3D 貓看板</a>
+        <a href="https://www.google.com/maps/search/?api=1&query=ホテルグレイスリー新宿+ゴジラ+新宿区" class="map-btn" target="_blank" style="margin-left:6px;">📍 哥吉拉</a>
+      </div>
+    </div>
+
+    <!-- 思出橫丁 -->
+    <div class="tl-item">
+      <div class="tl-time">21:00</div>
+      <div class="tl-dot walk">🚶</div>
+      <div class="tl-content">
+        <h4>思出橫丁（西口）— 昭和夜景收尾</h4>
+        <div class="transport walk">
+          <span class="icon">🚶</span>
+          <span>歌舞伎町→新宿駅東口→穿越駅內→西口出來步行 2 分</span>
+        </div>
+        <p>昭和老巷弄，烤串燒鳥＋啤酒，最後喝一杯收尾。</p>
+        <a href="https://www.google.com/maps/search/?api=1&query=思い出横丁+新宿西口" class="map-btn" target="_blank">📍 思出橫丁</a>
+      </div>
+    </div>
+
+    <!-- 回住宿 -->
+    <div class="tl-item">
+      <div class="tl-time">22:00</div>
+      <div class="tl-dot gray">🚇</div>
+      <div class="tl-content">
+        <h4>新宿 → 東新宿（回住宿）</h4>
+        <div class="transport">
+          <span class="icon">🚇</span>
+          <span>新宿西口（都營大江戶線 E-01）→ 東新宿（E-29）<br>約 3 分 · ¥280</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ===================== 4/28 澀谷 ===================== -->
+<div id="tab428" class="section">
+  <div class="sec-header">
+    <span class="date-badge">4/28（二）</span>
+    <h2>原宿 × 表參道 × 澀谷</h2>
+  </div>
+
+  <div class="timeline">
+    <div class="tl-item">
+      <div class="tl-time">08:30</div>
+      <div class="tl-dot green">🚇</div>
+      <div class="tl-content">
+        <h4>東新宿 → 原宿</h4>
+        <div class="transport">
+          <span class="icon">🚇</span>
+          <span>東新宿（副都心線 F-10）→ 明治神宮前（F-14）<br>約 5 分 · ¥180（出站即原宿／竹下通）</span>
+        </div>
+        <a href="https://www.google.com/maps/search/?api=1&query=原宿駅+明治神宮前" class="map-btn" target="_blank">📍 原宿駅</a>
+      </div>
+    </div>
+
+    <div class="tl-item">
+      <div class="tl-time">09:00</div>
+      <div class="tl-dot amber">🛍</div>
+      <div class="tl-content">
+        <h4>竹下通</h4>
+        <p>早上人少好拍照。MARION Crepes（必吃）、Totti Candy Factory 彩虹棉花糖，約 45 分。</p>
+        <a href="https://www.google.com/maps/search/?api=1&query=竹下通り+原宿" class="map-btn" target="_blank">📍 竹下通</a>
+      </div>
+    </div>
+
+    <div class="tl-item">
+      <div class="tl-time">10:00</div>
+      <div class="tl-dot walk">🚶</div>
+      <div class="tl-content">
+        <h4>竹下通 → 表參道（步行）</h4>
+        <div class="transport walk">
+          <span class="icon">🚶</span>
+          <span>步行約 10 分（沿明治通往南）</span>
+        </div>
+        <p>欅樹大道、Omotesando Hills、精品旗艦店，Cat Street 側巷值得深入探索。</p>
+        <a href="https://www.google.com/maps/search/?api=1&query=表参道ヒルズ+渋谷区" class="map-btn" target="_blank">📍 表參道</a>
+      </div>
+    </div>
+
+    <div class="tl-item">
+      <div class="tl-time">12:00</div>
+      <div class="tl-dot">🍴</div>
+      <div class="tl-content">
+        <h4>午餐：Afternoon Tea TEAROOM 表參道</h4>
+        <p>輕食套餐 ¥1,500 起，氛圍優雅。或選 Omotesando Hills B2F 各式餐廳。</p>
+        <a href="https://www.google.com/maps/search/?api=1&query=アフタヌーンティーティールーム+表参道" class="map-btn" target="_blank">📍 Afternoon Tea</a>
+      </div>
+    </div>
+
+    <div class="tl-item">
+      <div class="tl-time">13:30</div>
+      <div class="tl-dot walk">🚶</div>
+      <div class="tl-content">
+        <h4>表參道 → 澀谷（步行 or 地鐵）</h4>
+        <div class="transport walk">
+          <span class="icon">🚶</span>
+          <span>步行約 15 分 OR 銀座線 G02→G01 表參道→澀谷 ¥180</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="tl-item">
+      <div class="tl-time">14:00</div>
+      <div class="tl-dot blue">🏬</div>
+      <div class="tl-content">
+        <h4>澀谷逛街</h4>
+        <p>澀谷 109 → LOFT → PARCO → 唐吉訶德 → 迪士尼商店 → MARK IS，逛 2–3 小時。</p>
+        <a href="https://www.google.com/maps/search/?api=1&query=渋谷109+渋谷区" class="map-btn" target="_blank">📍 澀谷 109</a>
+      </div>
+    </div>
+
+    <div class="tl-item">
+      <div class="tl-time">17:00</div>
+      <div class="tl-dot">☁</div>
+      <div class="tl-content">
+        <h4>澀谷 SKY 展望台（¥2,000）</h4>
+        <p>Scramble Square 46F 屋頂，360 度無遮蔽，日落前 1 小時進場最美。富士山、鐵塔、晴空塔全收。<strong>必須提前官網/Klook 預約，常售罄！</strong></p>
+        <a href="https://www.google.com/maps/search/?api=1&query=渋谷スカイ+SHIBUYA+SKY+渋谷スクランブルスクエア" class="map-btn" target="_blank">📍 澀谷 SKY</a>
+      </div>
+    </div>
+
+    <div class="tl-item">
+      <div class="tl-time">19:30</div>
+      <div class="tl-dot">🍣</div>
+      <div class="tl-content">
+        <h4>晚餐：梅丘壽司美登利（澀谷店）</h4>
+        <p>17:00 開店前排隊領號，超值壽司 ¥2,000–4,000 吃飽。拿號後可去周邊逛街等叫號。</p>
+        <a href="https://www.google.com/maps/search/?api=1&query=梅丘寿司の美登利+渋谷店" class="map-btn" target="_blank">📍 美登利壽司</a>
+      </div>
+    </div>
+
+    <div class="tl-item">
+      <div class="tl-time">21:30</div>
+      <div class="tl-dot gray">🚇</div>
+      <div class="tl-content">
+        <h4>澀谷 → 東新宿（回住宿）</h4>
+        <div class="transport">
+          <span class="icon">🚇</span>
+          <span>澀谷（副都心線 F-16）→ 東新宿（F-10）直達<br>約 12 分 · ¥200</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== 4/29 銀座 ===================== -->
+<div id="tab429" class="section">
+  <div class="sec-header">
+    <span class="date-badge">4/29（三）</span>
+    <h2>東京鐵塔 × 銀座</h2>
+  </div>
+
+  <div class="timeline">
+    <div class="tl-item">
+      <div class="tl-time">08:30</div>
+      <div class="tl-dot green">🚇</div>
+      <div class="tl-content">
+        <h4>東新宿 → 赤羽橋</h4>
+        <div class="transport">
+          <span class="icon">🚇</span>
+          <span>東新宿（都營大江戶線 E-29）→ 赤羽橋（E-21）直達<br>約 15 分 · ¥280</span>
+        </div>
+        <a href="https://www.google.com/maps/search/?api=1&query=東新宿駅+都営大江戸線" class="map-btn" target="_blank">📍 東新宿駅</a>
+      </div>
+    </div>
+
+    <div class="tl-item">
+      <div class="tl-time">09:30</div>
+      <div class="tl-dot">🗼</div>
+      <div class="tl-content">
+        <h4>赤羽橋 × 増上寺 — 東京鐵塔拍攝</h4>
+        <p>出站步行 5 分，仰拍東京鐵塔最知名網紅角度。増上寺免費，可拍「鐵塔＋寺廟」構圖，停留約 1 小時。</p>
+        <a href="https://www.google.com/maps/search/?api=1&query=東京タワー+赤羽橋+増上寺" class="map-btn" target="_blank">📍 拍攝點</a>
+      </div>
+    </div>
+
+    <div class="tl-item">
+      <div class="tl-time">10:45</div>
+      <div class="tl-dot gray">🚇</div>
+      <div class="tl-content">
+        <h4>赤羽橋 → 銀座</h4>
+        <div class="transport">
+          <span class="icon">🚇</span>
+          <span>赤羽橋→神谷町（步行 5 分 or 大江戶線 1 站）<br>神谷町（日比谷線 H06）→ 銀座（H09）<br>約 6 分 · ¥180</span>
+        </div>
+        <a href="https://www.google.com/maps/search/?api=1&query=銀座駅+東京メトロ日比谷線" class="map-btn" target="_blank">📍 銀座駅</a>
+      </div>
+    </div>
+
+    <div class="tl-item">
+      <div class="tl-time">11:30</div>
+      <div class="tl-dot amber">🥪</div>
+      <div class="tl-content">
+        <h4>Ginza Sand 玉子三明治</h4>
+        <p>銀座 1 丁目 24-11，11:00 開店前 30 分排隊，現做 ¥650 起。</p>
+        <a href="https://www.google.com/maps/search/?api=1&query=銀座サンド+GINZA+SAND+中央区銀座" class="map-btn" target="_blank">📍 Ginza Sand</a>
+      </div>
+    </div>
+
+    <div class="tl-item">
+      <div class="tl-time">12:30</div>
+      <div class="tl-dot amber">🍞</div>
+      <div class="tl-content">
+        <h4>Age.3 Ginza 炸麵包捲</h4>
+        <p>原味鮮奶油 / 焦糖布蕾 ¥100 起，排隊 20–40 分，11:00 開店。</p>
+        <a href="https://www.google.com/maps/search/?api=1&query=揚げサンド+Age.3+GINZA+中央区銀座" class="map-btn" target="_blank">📍 Age.3</a>
+      </div>
+    </div>
+
+    <div class="tl-item">
+      <div class="tl-time">13:00</div>
+      <div class="tl-dot">🥩</div>
+      <div class="tl-content">
+        <h4>午餐：銀座 厚切炸豬排 or 炸牛排</h4>
+        <div class="price-note">
+          <strong>🐷 厚切炸豬排推薦：</strong><br><br>
+          🥇 <strong>新宿さぼてん 銀座店</strong>（銀座駅步行 5 分）<br>
+          創業 50 年老舖，使用自家「健美豚」，ヒレカツ定食 ¥1,700 起 · 11:00–22:00 · 不需預約<br>
+          銀座松坂屋内，交通便利，分量扎實。<br><br>
+          🥈 <strong>とんかつ 銀座梅林（銀座本店）</strong>（銀座駅步行 3 分）<br>
+          創業 1927 年，東京最老資格炸豬排老舖，超極厚ロースカツ ¥2,200 起 · 11:00–21:00 · 人氣店常有排隊<br>
+          近百年歷史，招牌黑醬濃厚，是銀座必吃的歷史炸豬排。<br><br>
+          <strong>🐄 炸牛排（牛カツ）推薦：</strong><br><br>
+          🥇 <strong>銀座ぎゅう道</strong>（銀座駅步行 5 分 / 新橋駅步行 3 分）<br>
+          熟成イチボ牛カツ（60秒ミディアムレア），牛かつ定食 ¥1,800 起 · 11:00–15:00 / 17:00–21:00<br>
+          Jazz 流れる大人の空間，イチボ部位柔嫩低脂，銀座最有質感的牛カツ店。<br><br>
+          🥈 <strong>新世界グリル梵 銀座店</strong>（銀座駅步行 3 分）<br>
+          大正 5 年（1916 年）創業超百年老舖西洋料理，厚切ビーフカツ定食 ¥3,500 起 · 11:30–21:00<br>
+          老派西洋料理氛圍，德米格拉斯醬炸牛排，銀座最古老的洋食店。
+        </div>
+        <a href="https://www.google.com/maps/search/?api=1&query=新宿さぼてん+銀座店+とんかつ" class="map-btn" target="_blank">📍 さぼてん銀座</a>
+        <a href="https://www.google.com/maps/search/?api=1&query=銀座梅林+とんかつ+銀座" class="map-btn" target="_blank" style="margin-left:6px;">📍 銀座梅林</a>
+        <a href="https://www.google.com/maps/search/?api=1&query=銀座ぎゅう道+牛カツ+銀座" class="map-btn" target="_blank" style="margin-left:6px;">📍 銀座ぎゅう道</a>
+        <a href="https://www.google.com/maps/search/?api=1&query=新世界グリル梵+銀座+ビーフカツ" class="map-btn" target="_blank" style="margin-left:6px;">📍 新世界グリル梵</a>
+      </div>
+    </div>
+
+    <div class="tl-item">
+      <div class="tl-time">14:00</div>
+      <div class="tl-dot blue">🏬</div>
+      <div class="tl-content">
+        <h4>銀座中央通逛街</h4>
+        <p>GINZA SIX、MUJI 旗艦、Uniqlo、Apple Store、各大精品，逛 2–3 小時。</p>
+        <a href="https://www.google.com/maps/search/?api=1&query=銀座中央通り+GINZA+SIX" class="map-btn" target="_blank">📍 銀座中央通</a>
+      </div>
+    </div>
+
+    <div class="tl-item">
+      <div class="tl-time">18:00</div>
+      <div class="tl-dot">🍜</div>
+      <div class="tl-content">
+        <h4>晚餐：銀座拉麵</h4>
+        <div class="price-note">
+          🍜 <strong>推薦三選一：</strong><br><br>
+          🥇 <strong>銀座 篝（かがり）本店</strong>（銀座駅步行 5 分）<br>
+          招牌鶏白湯醬油松露Soba ¥1,500 · 深夜 6:00 前營業 · 無需預約<br>
+          食べログ百名店常客，濃厚鶏白湯配上松露香氣，銀座最具代表性的拉麵<br><br>
+          🥈 <strong>自家製麺 伊藤 銀座店</strong>（東銀座駅步行 2 分）<br>
+          煮干し（乾沙丁魚）中華そば ¥950 · 11:00–15:00 及 17:30–21:30 · 週三休<br>
+          ミシュランビブグルマン 2 年連續入選，煮干清湯帶鮮味，搭配肉丼必點<br><br>
+          🥉 <strong>中華そば 共楽</strong>（銀座駅步行 4 分）<br>
+          昭和 31 年（1956 年）創業老舗，中華そば ¥900 起 · 深夜 23:30 前 · 不定休<br>
+          昔懷かしい東京醬油拉麵，ワンタンメン（雲吞麵）必點
+        </div>
+        <a href="https://www.google.com/maps/search/?api=1&query=銀座篝+本店+銀座+ラーメン" class="map-btn" target="_blank">📍 銀座 篝</a>
+        <a href="https://www.google.com/maps/search/?api=1&query=自家製麺+伊藤+銀座店+ラーメン" class="map-btn" target="_blank" style="margin-left:6px;">📍 自家製麺 伊藤</a>
+        <a href="https://www.google.com/maps/search/?api=1&query=中華そば+共楽+銀座" class="map-btn" target="_blank" style="margin-left:6px;">📍 共楽</a>
+      </div>
+    </div>
+
+    <div class="tl-item">
+      <div class="tl-time">20:30</div>
+      <div class="tl-dot gray">🚇</div>
+      <div class="tl-content">
+        <h4>銀座 → 東新宿（回住宿）</h4>
+        <div class="transport">
+          <span class="icon">🚇</span>
+          <span>銀座（銀座線 G-09）→ 表参道（G-02）→ 副都心線（F-02）→ 東新宿（F-10）<br>約 18 分 · ¥220</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== 4/30 返程 ===================== -->
+<div id="tab430" class="section">
+  <div class="sec-header">
+    <span class="date-badge">4/30（四）</span>
+    <h2>返程日</h2>
+  </div>
+
+  <!-- 去程航班資訊 -->
+  <div class="airline-card">
+    <h3>✈ 回程：酷航 Scoot TZ（成田→桃園）</h3>
+    <div class="flight-row">
+      <span class="badge">出發</span>
+      <span>成田 NRT 12:30 → 桃園 TPE 15:10</span>
+    </div>
+    <div class="flight-row">
+      <span class="badge">成田</span>
+      <span>第一航廈（酷航 Scoot 使用）</span>
+    </div>
+    <hr style="border-color:rgba(255,255,255,0.15);margin:10px 0">
+    <div class="rule-list">
+      <strong style="color:#ffd700;font-size:13px;">📦 行李規定（酷航）</strong>
+      <ul>
+        <li>手提：<strong style="color:#ffd700;">10 公斤</strong>（你已加購），尺寸 54×38×23 cm + 個人隨身 40×30×10 cm</li>
+        <li>托運：<strong style="color:#ffd700;">30 公斤</strong>（你已加購），最多 15 件，單件≤32 kg，總尺寸≤158 cm</li>
+        <li>⚠️ 酷航也會在登機口秤手提行李，超過 10 公斤一定收費</li>
+        <li>攜帶大量藥妝/戰利品的退稅品可放托運（密封好）</li>
+      </ul>
+      <br>
+      <strong style="color:#ffd700;font-size:13px;">⏰ 成田第一航廈 報到時間</strong>
+      <ul>
+        <li>建議 <strong style="color:white;">10:00 前</strong> 抵達成田第一航廈（起飛前 2.5 小時）</li>
+        <li>可提前線上 check-in：起飛前 48 小時至 1.5 小時</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- 當天流程 -->
+  <div class="timeline">
+    <div class="tl-item">
+      <div class="tl-time">08:00</div>
+      <div class="tl-dot amber">🛍</div>
+      <div class="tl-content">
+        <h4>早餐＋最後掃貨退稅</h4>
+        <p>新宿藥妝最後一輪，消費 ¥5,000 以上出示護照辦退稅（約 8%）。行李先寄飯店 or 直接推去車站。</p>
+        <a href="https://www.google.com/maps/search/?api=1&query=新宿+マツモトキヨシ+ドン・キホーテ" class="map-btn" target="_blank">📍 新宿藥妝</a>
+      </div>
+    </div>
+
+    <div class="tl-item">
+      <div class="tl-time">09:30</div>
+      <div class="tl-dot">🚉</div>
+      <div class="tl-content">
+        <h4>東新宿 → 成田第一航廈（出發）</h4>
+        <p>推薦提前查詢當天時刻，見下方交通攻略。</p>
+      </div>
+    </div>
+
+    <div class="tl-item">
+      <div class="tl-time">10:00</div>
+      <div class="tl-dot step-num red">✈</div>
+      <div class="tl-content">
+        <h4>抵達成田第一航廈 → 辦理登機</h4>
+        <p>酷航在第一航廈，<strong>直接有電車站</strong>（成田空港站），不需再走到其他航廈。</p>
+        <div class="airport-step" style="padding:8px 0;">
+          <div class="step-num">1</div>
+          <div class="step-content">從電車到達「成田空港駅」（第一航廈），B2F 出站。</div>
+        </div>
+        <div class="airport-step" style="padding:8px 0;">
+          <div class="step-num">2</div>
+          <div class="step-content">搭手扶梯到 1F，依指標「國際線出発 / Departures」前往 4F 辦理登機。</div>
+        </div>
+        <div class="airport-step" style="padding:8px 0;">
+          <div class="step-num">3</div>
+          <div class="step-content">找到酷航（Scoot）報到櫃台（TZ 開頭）辦理托運，再前往出境審查。</div>
+        </div>
+        <div class="info-box">🛒 第一航廈 B1F 有商店可購買最後伴手禮，出發前保留 20–30 分鐘。</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 成田第一航廈 美食推薦 -->
+  <div class="card amber">
+    <h3>🍽 成田第一航廈 美食推薦（4/30 午餐 or 點心）</h3>
+    <p style="font-size:12px;color:var(--muted);margin-bottom:10px;">酷航 12:30 起飛 → 建議 10:00 到機場 → 辦完登機約 10:30 → 可用 1 小時吃東西</p>
+
+    <div class="airport-step">
+      <div class="step-num" style="background:#e67e22;">4F</div>
+      <div class="step-content">
+        <strong>🍱 だし茶漬け えん（成田空港店）｜出發大廳 4F</strong>
+        出境前可用。精選昆布＋鰹節＋數種削節的極上出汁，鯛だし茶漬け ¥1,400 起。旅行最後一餐吃日式茶泡飯，清淡暖胃完美收尾。
+      </div>
+    </div>
+    <div class="airport-step">
+      <div class="step-num" style="background:#e67e22;">4F</div>
+      <div class="step-content">
+        <strong>🍜 とんかつ 新宿さぼてん（成田空港第1ターミナル店）｜出發大廳 4F</strong>
+        創業 50 年老舖炸豬排，ヒレカツ定食 ¥1,700 起。用自家品牌「健美豚」豬肉，肉質鮮嫩。最後一餐吃炸豬排超滿足！
+      </div>
+    </div>
+    <div class="airport-step">
+      <div class="step-num" style="background:#27ae60;">免稅</div>
+      <div class="step-content">
+        <strong>🍜 フードコート（免稅區内）｜出境後</strong>
+        通關後的免稅區内有フードコート，可選拉麵、蕎麥麵、漢堡等，價格親民（¥900–1,500）。時間充裕可在此慢慢吃再登機。
+      </div>
+    </div>
+    <div class="airport-step">
+      <div class="step-num" style="background:#2980b9;">點心</div>
+      <div class="step-content">
+        <strong>☕ スターバックス（4F）｜出發大廳 4F</strong>
+        出境前的星巴克，可帶咖啡飲料或點心上機（出境後飲料不得帶入）。成田第一航廈的外牆有星巴克一號店的壁畫 — 打卡點！
+      </div>
+    </div>
+    <div class="airport-step">
+      <div class="step-num" style="background:#8e44ad;">B1F</div>
+      <div class="step-content">
+        <strong>🛍 最後伴手禮｜B1F 商店街</strong>
+        電車站出來的 B1F 有各式日本伴手禮店（甜點、零食、茶葉），出境前還有機會補買！<br>
+        推薦：東京ばな奈、白い恋人、じゃがポックル、葛飾北斎限定款等
+      </div>
+    </div>
+    <div class="warn" style="margin-top:6px;">⚠️ 以上餐廳均在<strong>出境前（保安檢查前）</strong>的 4F 或 B1F。若要在出境後免稅區吃，依當天指示牌找餐廳即可。酷航屬 LCC，<strong>機上餐點需自費購買</strong>（不含餐）。</div>
+  </div>
+
+  <!-- 住宿→機場 交通 -->
+  <div class="card blue">
+    <h3>🚆 東新宿 → 成田第一航廈（返程交通）</h3>
+
+    <p style="font-weight:700;color:var(--primary);margin-bottom:8px;">方案①｜副都心線＋Skyliner 上野出發（推薦，最順）</p>
+    <table class="ticket-table" style="margin-bottom:10px;">
+      <tr><th>路段</th><th>時間</th><th>費用</th></tr>
+      <tr><td>東新宿（副都心線 F-10）→ 表参道（F-02）→ 銀座線 G-02 → 上野（G-16）</td><td>約 28 分</td><td>¥270</td></tr>
+      <tr><td>上野（京成上野）→ 成田空港（Skyliner）</td><td>約 44 分</td><td>¥2,580</td></tr>
+      <tr class="best"><td>合計</td><td><strong>約 75 分</strong></td><td><strong>¥2,850</strong></td></tr>
+    </table>
+
+    <p style="font-weight:700;color:var(--primary);margin-bottom:8px;">方案②｜副都心線→JR N'EX（新宿出發）</p>
+    <table class="ticket-table" style="margin-bottom:10px;">
+      <tr><th>路段</th><th>時間</th><th>費用</th></tr>
+      <tr><td>東新宿→新宿（副都心線）</td><td>約 8 分</td><td>¥180</td></tr>
+      <tr><td>新宿→成田空港（N'EX）</td><td>約 80 分</td><td>¥3,330（或來回優惠票回程免費）</td></tr>
+      <tr><td>合計</td><td><strong>約 90 分</strong></td><td><strong>¥3,510</strong>（若有來回票則僅 ¥180）</td></tr>
+    </table>
+
+    <p style="font-weight:700;font-size:13px;margin-bottom:6px;">📅 4/30 推薦班次（目標 10:00 前到達）</p>
+    <p style="font-size:12px;color:var(--muted);margin-bottom:6px;">需在 09:30 前從東新宿出發</p>
+    <table class="ticket-table">
+      <tr><th>方案</th><th>東新宿出發</th><th>京成上野搭車</th><th>抵達成田（估）</th></tr>
+      <tr class="best"><td><strong>Skyliner 上野（推薦）</strong></td><td><strong>09:00</strong></td><td><strong>09:28 Skyliner</strong></td><td><strong>約 10:12</strong></td></tr>
+      <tr><td>N'EX（新宿）</td><td>08:40</td><td>09:00 N'EX 新宿</td><td>約 10:20</td></tr>
+    </table>
+
+    <div class="warn" style="margin-top:10px;">⚠️ <strong>成田第一航廈補充：</strong>酷航用第一航廈，電車可直接停靠「成田空港駅」（第一航廈），<strong>無需轉換航廈</strong>。比去程捷星的第三航廈方便很多！</div>
+  </div>
+</div>
+
+<!-- ===================== 票券 ===================== -->
+<div id="tabTicket" class="section">
+  <div class="sec-header">
+    <span class="date-badge">🎫</span>
+    <h2>票券試算（A方案）</h2>
+  </div>
+
+  <div class="ticket-summary">
+    <h3>💳 A方案 每日交通費用</h3>
+    <div class="ticket-row">
+      <span>4/25 抵達</span>
+      <span class="day">成田→東新宿</span>
+      <span class="cost">¥3,010</span>
+    </div>
+    <div class="ticket-row">
+      <span>4/26 鐮倉</span>
+      <span class="day">JR+江電+逗子</span>
+      <span class="cost">¥3,470</span>
+    </div>
+    <div class="ticket-row">
+      <span>4/27 淺草＋新宿</span>
+      <span class="day">副都心線+銀座線+都營</span>
+      <span class="cost">¥830</span>
+    </div>
+    <div class="ticket-row">
+      <span>4/28 澀谷</span>
+      <span class="day">副都心線+Metro</span>
+      <span class="cost">¥560</span>
+    </div>
+    <div class="ticket-row">
+      <span>4/29 銀座</span>
+      <span class="day">都營+Metro</span>
+      <span class="cost">¥560</span>
+    </div>
+    <div class="ticket-row">
+      <span>4/30 返程</span>
+      <span class="day">東新宿→成田</span>
+      <span class="cost">¥3,010</span>
+    </div>
+    <div class="ticket-total">
+      <span>合計（含機場交通）</span>
+      <span>約 ¥11,740</span>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>📌 最終推薦方案</h3>
+    <p><strong>Suica 全程 ＋ Skyliner（去回各一）</strong></p>
+    <ul style="margin-top:8px;">
+      <li>Skyliner 去回各 ¥2,580，合計 ¥5,160（可在 KKday 購買優惠票 ¥4,500 省 ¥660）</li>
+      <li>市區交通全部用 Suica（IC 卡）按次付款，最靈活</li>
+      <li>不推薦 72 小時 Metro 券（本行程大量用 JR 和都營，Metro 車資約 ¥1,800，省不了多少）</li>
+    </ul>
+  </div>
+
+  <div class="card blue">
+    <h3>🚆 Skyliner 票券購買方式</h3>
+    <ul>
+      <li>現場購票：成田機場 B1F 京成電鐵售票窗口（或自動售票機）</li>
+      <li>線上購票：<a href="https://skyliner.ec.keisei.co.jp" target="_blank" style="color:var(--blue);">京成官網</a> 或 KKday（有優惠）</li>
+      <li>Skyliner 為對號座，需指定車次，請提前預訂</li>
+    </ul>
+  </div>
+
+  <div class="card amber">
+    <h3>🎫 需提前購票 / 預約的項目</h3>
+    <ul>
+      <li>🌆 <strong>澀谷 SKY</strong>（4/28）— 官網或 Klook，常售罄！</li>
+      <li>🌸 <strong>江之電一日票</strong>「のりおりくん」¥800 — 藤沢站現場購買即可</li>
+      <li>🥩 <strong>一頭牛燒肉 房家</strong> — 提前 1–2 天網路預約（ホットペッパー）</li>
+      <li>🚆 <strong>Skyliner</strong> — 建議網路提前訂票</li>
+      <li>🎆 <strong>熱海花火（若有）</strong> — 出發前確認日期再決定</li>
+    </ul>
+  </div>
+</div>
+
+<!-- ===================== 事前準備 ===================== -->
+<div id="tabPrepare" class="section">
+  <div class="sec-header">
+    <span class="date-badge">📋</span>
+    <h2>出發前準備清單</h2>
+  </div>
+
+  <!-- 行程前（在台灣）-->
+  <div class="card">
+    <h3>🏠 出發前在台灣必做</h3>
+    <ul class="checklist">
+      <li>
+        <span class="tag">必做</span>
+        <div>
+          <strong>VJW（Visit Japan Web）電子申報</strong><br>
+          日本海關電子申報系統，入境和免稅申報都可用，可大幅縮短通關時間。<br>
+          👉 <a href="https://vjw-lp.digital.go.jp/zh-hant/" target="_blank" style="color:var(--blue);">VJW 官網</a> — 建議出發前 1–2 週完成登記
+        </div>
+      </li>
+      <li>
+        <span class="tag">必做</span>
+        <div>
+          <strong>eSIM / 網路卡</strong><br>
+          日本旅遊推薦選項：<br>
+          • IIJmio eSIM（Docomo 系）/ Mobal eSIM<br>
+          • KKday / Klook 上的日本 eSIM（買後掃 QR 碼直接啟用）<br>
+          • 也可在桃園機場購買 SIM 卡<br>
+          建議出發前在台灣設定好，避免入境後找不到 WiFi 無法安裝
+        </div>
+      </li>
+      <li>
+        <span class="tag blue">建議</span>
+        <div>
+          <strong>旅遊平安險 / 旅遊不便險</strong><br>
+          可加購班機延誤、行李遺失、緊急醫療等保障。<br>
+          推薦：富邦旅平險、國泰世華、台灣產險，保費約 NT$500–1,500
+        </div>
+      </li>
+      <li>
+        <span class="tag blue">建議</span>
+        <div>
+          <strong>Skyliner 票券購買</strong><br>
+          建議提前在 <a href="https://skyliner.ec.keisei.co.jp" target="_blank" style="color:var(--blue);">京成官網</a> 或 KKday 購買，來回優惠約 ¥4,500（省 ¥660）
+        </div>
+      </li>
+      <li>
+        <span class="tag blue">建議</span>
+        <div>
+          <strong>澀谷 SKY 預約（4/28）</strong><br>
+          非常熱門，建議出發前 1–2 週在官網預訂<br>
+          👉 <a href="https://www.shibuya-sky.jp" target="_blank" style="color:var(--blue);">澀谷 SKY 官網</a>
+        </div>
+      </li>
+      <li>
+        <span class="tag amber">推薦</span>
+        <div>
+          <strong>Suica 虛擬卡（Apple/Google Pay）</strong><br>
+          iPhone 或 Android 直接加入 Suica，所有電車、便利商店、餐廳都可用。建議先加值 ¥3,000–5,000
+        </div>
+      </li>
+      <li>
+        <span class="tag amber">推薦</span>
+        <div>
+          <strong>一頭牛燒肉 房家 預約（4/29）</strong><br>
+          ホットペッパーグルメ 或 Tabelog 可線上預約
+        </div>
+      </li>
+      <li>
+        <span class="tag green">確認</span>
+        <div>
+          <strong>熱海花火確認（4/26）</strong><br>
+          非固定場次，出發前查詢：<a href="https://www.atami-onsen.or.jp" target="_blank" style="color:var(--blue);">atami-onsen.or.jp</a>
+        </div>
+      </li>
+    </ul>
+  </div>
+
+  <!-- 門票/票券 -->
+  <div class="card green">
+    <h3>🎫 門票 / 景點票券整理</h3>
+    <ul class="checklist">
+      <li>
+        <span class="tag green">免費</span>
+        <div><strong>雷門・淺草寺・淺草文化觀光中心展望台</strong>（8F 展望免費）</div>
+      </li>
+      <li>
+        <span class="tag green">現場購</span>
+        <div><strong>江之電一日票「のりおりくん」</strong> ¥800 — 藤沢站現場購買</div>
+      </li>
+      <li>
+        <span class="tag">預訂</span>
+        <div><strong>澀谷 SKY</strong> ¥2,000 — 官網提前預訂</div>
+      </li>
+      <li>
+        <span class="tag green">現場購</span>
+        <div><strong>江之島 弁天洞窟</strong> ¥500 + 海蠟燭 ¥500 — 現場購買</div>
+      </li>
+    </ul>
+  </div>
+
+  <!-- 換匯 -->
+  <div class="card amber">
+    <h3>💴 換匯建議</h3>
+    <ul>
+      <li>建議攜帶現金 ¥30,000–50,000（部分老店、小餐廳不接受信用卡）</li>
+      <li>台灣換匯推薦：兆豐銀行、台灣銀行（提前預約大鈔）</li>
+      <li>日本機場（成田）也可換，但匯率較差</li>
+      <li>便利商店（7-Eleven、Family Mart）ATM 可用台灣 VISA/Mastercard 提款</li>
+    </ul>
+  </div>
+
+  <!-- 下載App -->
+  <div class="card purple">
+    <h3>📱 推薦下載的 App</h3>
+    <ul>
+      <li><strong>乗換案内（NAVITIME Japan）</strong> — 日本電車轉乘必備</li>
+      <li><strong>Google Maps</strong> — 備用導航</li>
+      <li><strong>Suica / Pasmo</strong> — IC 卡行動支付</li>
+      <li><strong>食べログ / Google Maps</strong> — 查餐廳評價</li>
+      <li><strong>ホットペッパーグルメ</strong> — 餐廳預約</li>
+    </ul>
+  </div>
+</div>
+
+<script>
+function showTab(id) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  event.currentTarget.classList.add('active');
+}
+
+function showVariant(id) {
+  document.querySelectorAll('.variant-content').forEach(v => v.classList.remove('active'));
+  document.querySelectorAll('.variant-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  event.currentTarget.classList.add('active');
+}
+</script>
+</body>
+</html>
